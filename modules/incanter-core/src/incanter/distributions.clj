@@ -816,3 +816,40 @@
   "
   ([] (uniform-distribution 0.0 1.0)) ; since "0 1" not implicitly promoted, otherwise no matching ctor...
   ([min max] (DoubleUniform-rec. min max)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ARBITRARY DISTRIBUTIONS
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Extends support for distributions to arbitrary functions
+;; Crucially, supports sampling
+
+(defn sample
+  "
+  Returns a lazy sequence of samples from the PDF.  The PDF can be an implementation of
+  incanter.distributions.Distribution, or it can be an arbitrary univariate function.
+
+  Options can be based via keys.
+
+  Arguments:
+    pdf, options
+
+  Options:
+  :methods
+    :inv      Inverse Transform using Chebyshev polynomial approximation (Olver 2006)
+    :ars      Adaptive Rejection Sampling (Gilks 1992)
+    :arms     Adaptive Rejection Metropolis Sampling (Martino 2012)
+    :mh       Metropolis-Hastings Sampling
+
+  See also:
+    Distribution, pdf, cdf, draw, support
+
+  Example: (sample the symetrical triangular distribution on [-1,1])
+    (let [triang-pdf (fn [x]
+                       (if (> (abs x) 1)
+                         0
+                         (- 1 (abs x))))
+      (sample triang-pdf))
+  "
+  [pdf & {:keys [method]}]
+  )
