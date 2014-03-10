@@ -824,12 +824,13 @@
 ;; Extends support for distributions to arbitrary functions
 ;; Crucially, supports sampling
 
-(defn sample
+(defmulti ^{:arglists '([pdf & [argmap]]) }
+  sample
   "
   Returns a lazy sequence of samples from the PDF.  The PDF can be an implementation of
   incanter.distributions.Distribution, or it can be an arbitrary univariate function.
 
-  Options can be based via keys.
+  Options can be set via keys.
 
   Arguments:
     pdf, options
@@ -840,6 +841,7 @@
     :ars      Adaptive Rejection Sampling (Gilks 1992)
     :arms     Adaptive Rejection Metropolis Sampling (Martino 2012)
     :mh       Metropolis-Hastings Sampling
+    default:  :inv
 
   See also:
     Distribution, pdf, cdf, draw, support
@@ -851,5 +853,9 @@
                          (- 1 (abs x))))
       (sample triang-pdf))
   "
-  [pdf & {:keys [method]}]
-  )
+  (fn [_ & [argmap]]
+    (:method argmap)))
+
+(defmethod sample :default
+  [pdf & [argmap]]
+  (sample pdf (assoc argmap :method :inv)))
